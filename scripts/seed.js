@@ -9,7 +9,9 @@ const bcrypt = require('bcrypt');
 
 async function seedUsers(client) {
   try {
+    console.log('BEGIN seedUsers');
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    console.log('CREATE EXTENSION IF NOT EXISTS Pass');
     // Create the "users" table if it doesn't exist
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS users (
@@ -41,6 +43,7 @@ async function seedUsers(client) {
       users: insertedUsers,
     };
   } catch (error) {
+    //console.log(error);
     console.error('Error seeding users:', error);
     throw error;
   }
@@ -161,19 +164,16 @@ async function seedRevenue(client) {
 }
 
 async function main() {
+  console.log('BEGIN main');
   const client = await db.connect();
-
   await seedUsers(client);
   await seedCustomers(client);
   await seedInvoices(client);
   await seedRevenue(client);
-
   await client.end();
+  console.log('END main');
 }
 
 main().catch((err) => {
-  console.error(
-    'An error occurred while attempting to seed the database:',
-    err,
-  );
+  console.error('An error occurred while attempting to seed the database:',err,);
 });
